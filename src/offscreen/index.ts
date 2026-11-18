@@ -56,6 +56,10 @@ async function recognize(image: string, langs: string): Promise<OcrResponse> {
   return { ok: true, lines: lines.filter((l) => l.text), ms: Math.round(performance.now() - started) };
 }
 
+// Firefox has no offscreen documents but its background page can start workers, so the
+// Firefox build loads this file into the background page and calls recognize() directly.
+(globalThis as { neleceniRecognize?: typeof recognize }).neleceniRecognize = recognize;
+
 chrome.runtime.onMessage.addListener((msg: OffscreenOcrRequest, _sender, sendResponse) => {
   if (msg?.target !== 'offscreen' || msg.type !== 'offscreen-ocr') return false;
   recognize(msg.image, msg.langs).then(sendResponse, (err: unknown) =>

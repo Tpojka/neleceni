@@ -27,6 +27,9 @@ async function ensureOffscreen(): Promise<void> {
 }
 
 async function runOcr(image: string, langs: string): Promise<OcrResponse> {
+  const local = (globalThis as { neleceniRecognize?: (image: string, langs: string) => Promise<OcrResponse> })
+    .neleceniRecognize;
+  if (local) return local(image, langs); // Firefox: OCR runs in this background page
   await ensureOffscreen();
   const req: OffscreenOcrRequest = { target: 'offscreen', type: 'offscreen-ocr', image, langs };
   const res = (await chrome.runtime.sendMessage(req)) as OcrResponse | undefined;

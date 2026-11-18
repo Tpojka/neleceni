@@ -72,6 +72,10 @@ npm run build
 
 > Chrome памти проширење по путањи до фасцикле. Ако фасциклу преместите или преименујете, уклоните проширење и поново га учитајте преко **Load unpacked**. Подешавања се тада враћају на подразумевана.
 
+#### Firefox (из изворног кода)
+
+Firefox 128 или новији. Изградите проширење са `npm run build:firefox` (уместо `npm run build`), па у Firefox-у отворите `about:debugging#/runtime/this-firefox`, кликните **Load Temporary Add-on** и изаберите `dist-firefox/manifest.json`. Овако учитано проширење ради док не затворите Firefox.
+
 ### Коришћење
 
 Кад је проширење инсталирано, не морате ништа да подешавате: отворите пренос са канала @ParlamentSrbija и оно ради само.
@@ -221,6 +225,10 @@ npm run build
 The finished extension is in the `dist/` folder; load it as in steps 3–7 above. **Updating:** `git pull`, `npm install`, `npm run build`, then ↻ on the **Neleceni** card.
 
 > Chrome identifies the extension by its folder path. If you move or rename the folder, remove the extension and load it again with **Load unpacked**. Its settings then go back to the defaults.
+
+#### Firefox (from source)
+
+Firefox 128 or newer. Build with `npm run build:firefox` (instead of `npm run build`), then in Firefox open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on** and choose `dist-firefox/manifest.json`. An add-on loaded this way stays until Firefox closes.
 
 ### Using it
 
