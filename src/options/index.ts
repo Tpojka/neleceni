@@ -83,7 +83,10 @@ document.getElementById('reset')!.addEventListener('click', async () => {
 document.addEventListener('click', (e) => {
   if (!(e.target instanceof Element) || !e.target.closest('[data-action="shortcuts"]')) return;
   e.preventDefault();
-  void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  // Firefox can't open its shortcut page by URL, but has an API for it.
+  const cmds = chrome.commands as { openShortcutSettings?: () => Promise<void> };
+  if (cmds.openShortcutSettings) void cmds.openShortcutSettings();
+  else void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
 });
 
 translate(DEFAULT_SETTINGS.language);

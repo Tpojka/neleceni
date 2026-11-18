@@ -2,17 +2,34 @@
 // copies static files, and copies Tesseract's worker, WASM core and Serbian language data
 // so nothing is loaded from a CDN at runtime (Manifest V3 forbids remote code).
 import * as esbuild from 'esbuild';
-import { cp, mkdir, readdir, rm } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const dist = join(root, 'dist');
 const nm = join(root, 'node_modules');
 const watch = process.argv.includes('--watch');
+const firefox = process.argv.includes('--firefox');
+const dist = join(root, firefox ? 'dist-firefox' : 'dist');
 
 async function copyStatic() {
   await cp(join(root, 'static'), dist, { recursive: true });
+  if (firefox) await firefoxManifest();
+}
+
+// Firefox MV3: an event page instead of a service worker (it also hosts OCR, since Firefox
+// has no offscreen documents), an add-on id, and no Chrome-only keys.
+async function firefoxManifest() {
+  const file = join(dist, 'manifest.json');
+  const m = JSON.parse(await readFile(file, 'utf8'));
+  delete m.minimum_chrome_version;
+  m.permissions = m.permissions.filter((p) => p !== 'offscreen');
+  m.background = { scripts: ['offscreen.js', 'background.js'] };
+  m.browser_specific_settings = {
+    gecko: { id: 'neleceni@tpojka.github.io', strict_min_version: '128.0', data_collection_permissions: { required: ['none'] } },
+  };
+  await writeFile(file, JSON.stringify(m, null, 2) + '\n');
+  await rm(join(dist, 'offscreen.html'));
 }
 
 // Licence texts travel with the built extension (MIT for Neleceni, Apache-2.0 for Tesseract).
@@ -62,7 +79,7 @@ const options = {
   bundle: true,
   format: 'iife',
   platform: 'browser',
-  target: 'chrome116',
+  target: firefox ? 'firefox128' : 'chrome116',
   // Readable output makes Chrome Web Store review easier.
   minify: false,
   sourcemap: watch ? 'inline' : false,
