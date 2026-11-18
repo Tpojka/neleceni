@@ -74,9 +74,10 @@ export function allowedErrors(tokenLength: number): number {
  * whole; the others may also be found as a recognisable piece, because letters over a bright
  * background get lost: the replay read "Александар Вучић" as "А екса · р Вучић", where "екса"
  * is a piece of "Александар". A piece must be at least 3 letters and 40 % of the word; pieces of
- * 6+ letters may have two OCR mistakes ("ексанћр" in a wide shot). A long word (6+ letters) may
- * also be found with up to 40 % of its letters wrong ("АпењСандар", "аксанћр"), but only next to
- * another word found whole, so "Александар Вулин" still does not match "Александар Вучић".
+ * 6+ letters may have two OCR mistakes ("ексанћр" in a wide shot). A long non-surname word
+ * (6+ letters) may also be found with up to 40 % of its letters wrong, but only next to another
+ * word found whole. This keeps OCR-tolerant first-name matching without accepting a different
+ * surname as the target.
  */
 export function lineMatchesName(line: string, name: string): boolean {
   const tokens = normalize(name).split(' ').filter(Boolean);
@@ -92,10 +93,13 @@ export function lineMatchesName(line: string, name: string): boolean {
         substringDistance(t, w) <= (w.length >= 6 ? 2 : allowedErrors(w.length)),
     );
 
-  const loose = (t: string) => t.length >= 6 && substringDistance(compact, t) <= Math.floor(t.length * 0.4);
+  const loose = (t: string, i: number) =>
+    (tokens.length === 1 || i < tokens.length - 1) &&
+    t.length >= 6 &&
+    substringDistance(compact, t) <= Math.floor(t.length * 0.4);
 
   const found = tokens.map(whole);
-  return found.some(Boolean) && tokens.every((t, i) => found[i] || piece(t) || loose(t));
+  return found.some(Boolean) && tokens.every((t, i) => found[i] || piece(t) || loose(t, i));
 }
 
 export interface OcrLine {

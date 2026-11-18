@@ -82,6 +82,12 @@ describe('classify', () => {
     const lines = [line('Ана Брнабић', 18), line('Александар Вучић - Србија побеђује', 82)];
     assert.deepEqual(classify(lines, TARGET, 35), { kind: 'other', line: 'Ана Брнабић' });
   });
+  it('does not mistake a different surname for the configured speaker', () => {
+    assert.deepEqual(
+      classify([line('Никола Вукелић', 60)], ['Никола Вулетић'], 35),
+      { kind: 'other', line: 'Никола Вукелић' },
+    );
+  });
   it('reads nothing when only the group line was recognised', () => {
     assert.deepEqual(classify([line('Александар Вучић - Србија побеђује', 82)], TARGET, 35), { kind: 'none' });
   });
