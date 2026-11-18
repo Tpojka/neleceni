@@ -53,7 +53,9 @@ every 1.5 s:
 - Un-mute after another speaker's name has been read 3 times (fresh OCR readings while muted).
 - A caption that disappears does not end the mute, because the speech usually goes on.
 - Manual toggle (pill click or Alt+Shift+M) holds until a clearly different caption has been read 3 times.
-- Seeking in a replay or switching videos resets the state; the caption at the new position decides.
+- Seeking in a replay resets the automatic state; the caption at the new position decides. A manual choice is
+  kept through the seek and still holds until a clearly different caption has been read 3 times.
+- Switching videos resets everything, the manual choice included.
 
 ## Caption layouts on @ParlamentSrbija
 

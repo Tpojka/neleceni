@@ -6,7 +6,7 @@
 import { classify, type Observation } from '../shared/match.ts';
 import type { OcrRequest, OcrResponse, StatusMessage, TabStatus, ToContent } from '../shared/messages.ts';
 import { resolveLang, t, type Lang } from '../shared/i18n.ts';
-import { initialState, isMuted, step, toggle, type MuteState } from '../shared/state.ts';
+import { afterSeek, initialState, isMuted, step, toggle, type MuteState } from '../shared/state.ts';
 import { DEFAULT_SETTINGS, loadSettings, onSettingsChanged, type Settings } from '../shared/settings.ts';
 import { AudioGate } from './audio.ts';
 import { captureCaption, signatureDistance, type Capture } from './capture.ts';
@@ -65,7 +65,14 @@ function resetState(): void {
 
 function onSeeked(): void {
   // Replays: the caption at the new position decides, not what was on screen before the jump.
-  resetState();
+  // A manual choice (pill click / shortcut) is kept, so a short jump does not undo it.
+  const wasMuted = isMuted(state);
+  state = afterSeek(state);
+  lastSig = null;
+  lastObs = { kind: 'none' };
+  lastOcrText = '';
+  lastCapture = null;
+  if (trackedVideo && wasMuted !== isMuted(state)) gate.set(trackedVideo, isMuted(state));
   schedule(50);
 }
 

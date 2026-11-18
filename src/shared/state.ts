@@ -77,6 +77,15 @@ export function step(s: MuteState, obs: Observation, now: number, cfg: StepConfi
   return { autoMuted, otherStreak, lastTargetAt, lastLine, override, last: obs };
 }
 
+/**
+ * State after a seek in a replay. The automatic decision starts over, so the caption at the new
+ * position decides. A manual choice stays: it still holds until a clearly different caption has
+ * been read `otherConfirmations` times, counted from the new position.
+ */
+export function afterSeek(s: MuteState): MuteState {
+  return { ...initialState(), override: s.override && { ...s.override, changeStreak: 0 } };
+}
+
 /** Flip the audible state by hand. Going back to what automatic control wants clears the override. */
 export function toggle(s: MuteState): MuteState {
   const muted = !isMuted(s);
