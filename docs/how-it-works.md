@@ -29,6 +29,8 @@ every 1.5 s:
    model. Content scripts cannot start extension workers inside youtube.com and service workers cannot start
    workers at all, hence the offscreen document. All OCR files ship inside the extension; nothing is downloaded
    at runtime (Manifest V3 forbids remote code).
+   In the Firefox version (`firefox/`) there are no offscreen documents; the background event page starts the
+   Tesseract worker itself (`firefox/background.ts`).
 4. **Name line only** (`pickSpeakerLine` in `src/shared/match.ts`). The caption has two lines: the speaker's name,
    then the parliamentary group. The group line for SNS deputies is *"Александар Вучић - Србија побеђује"*, so
    matching the whole caption would mute every member of that group. The caption comes in two sizes at different

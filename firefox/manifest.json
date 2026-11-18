@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Neleceni",
+  "short_name": "Neleceni",
+  "version": "0.1.1",
+  "description": "__MSG_extDescription__",
+  "homepage_url": "https://github.com/Tpojka/neleceni",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "neleceni@tpojka.github.io",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "default_locale": "en",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Neleceni",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "toggle-mute": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "__MSG_cmdToggle__"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
