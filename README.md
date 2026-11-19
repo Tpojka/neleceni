@@ -2,6 +2,9 @@
 
 # Neleceni
 
+**[Инсталирајте из продавнице Chrome Web Store](https://chromewebstore.google.com/detail/neleceni/ffkbnnalhdnnnaeemojkmgpajmaagnjl)**: бесплатно, ажурира се само.\
+**[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/neleceni/ffkbnnalhdnnnaeemojkmgpajmaagnjl)**: free, updates itself.
+
 **[Српски](#српски) · [English](#english)**
 
 ---
@@ -29,9 +32,20 @@ Neleceni је проширење за Google Chrome које само утиша
 
 ### Инсталација
 
-Проширење још није у продавници Chrome Web Store, па се инсталира ручно, у режиму за програмере.
+#### Из продавнице Chrome Web Store (препоручено)
 
-#### Најлакше: готов ZIP
+1. Отворите [Neleceni у продавници Chrome Web Store](https://chromewebstore.google.com/detail/neleceni/ffkbnnalhdnnnaeemojkmgpajmaagnjl) и кликните **Додај у Chrome** (Add to Chrome).
+2. Отвориће се страница са подешавањима; горе десно изаберите језик (**Језик / Language**), а ако вам остала подразумевана подешавања одговарају, само је затворите.
+3. Закачите иконицу проширења на траку са алаткама: кликните иконицу слагалице 🧩 десно од адресе, па чиоду поред **Neleceni**.
+4. Отворите пренос или снимак са канала @ParlamentSrbija.
+
+Chrome сам ажурира проширење кад изађе нова верзија.
+
+> Ако сте проширење раније учитали ручно (ZIP или изворни код), уклоните ту копију у `chrome://extensions`, да не раде две истовремено. Подешавања се из ручно учитане копије не преносе; ако сте их мењали, унесите их поново.
+
+#### Ручно: готов ZIP
+
+Ако не желите продавницу, проширење можете да учитате и ручно, у режиму за програмере.
 
 1. На страници [Releases](https://github.com/Tpojka/neleceni/releases/latest) преузмите датотеку `neleceni-<верзија>.zip` (одељак **Assets**).
 2. Распакујте је у фасциклу коју нећете брисати ни премештати, нпр. `Documents/neleceni`. Chrome проширење учитава управо из те фасцикле.
@@ -172,9 +186,20 @@ It was built for the official YouTube channel of the National Assembly of Serbia
 
 ### Installation
 
-The extension is not in the Chrome Web Store yet, so you install it by hand, in developer mode.
+#### From the Chrome Web Store (recommended)
 
-#### Easiest: the ready-made ZIP
+1. Open [Neleceni on the Chrome Web Store](https://chromewebstore.google.com/detail/neleceni/ffkbnnalhdnnnaeemojkmgpajmaagnjl) and click **Add to Chrome**.
+2. The settings page opens; pick the language at the top right (**Језик / Language**), and if the other defaults suit you, just close it.
+3. Pin the extension to the toolbar: click the puzzle icon 🧩 to the right of the address bar, then the pin next to **Neleceni**.
+4. Open a live stream or a replay on @ParlamentSrbija.
+
+Chrome updates the extension by itself when a new version comes out.
+
+> If you loaded the extension by hand before (ZIP or source), remove that copy in `chrome://extensions` so the two don't run at once. Settings don't carry over from the hand-loaded copy; re-enter them if you had changed any.
+
+#### By hand: the ready-made ZIP
+
+If you'd rather not use the store, you can load the extension by hand, in developer mode.
 
 1. On the [Releases](https://github.com/Tpojka/neleceni/releases/latest) page, download `neleceni-<version>.zip` (under **Assets**).
 2. Unzip it into a folder you won't delete or move, e.g. `Documents/neleceni`. Chrome loads the extension from that very folder.
