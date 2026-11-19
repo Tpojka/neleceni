@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import { classify, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
+import { classify, findGroup, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
 import { channelKey } from '../src/content/channel.ts';
+import { sanitize } from '../src/shared/settings.ts';
 
 const TARGET = ['Александар Вучић'];
 // Caption lines as Tesseract reports them: 40 px tall, `y0` from the top of the crop.
@@ -176,5 +177,45 @@ describe('channelKey', () => {
     assert.equal(channelKey('@ParlamentSrbija'), '@parlamentsrbija');
     assert.equal(channelKey('https://www.youtube.com/@ParlamentSrbija/streams'), '@parlamentsrbija');
     assert.equal(channelKey('/channel/UCghngrfQwzJ4aaPZ-UgNIZQ'), 'ucghngrfqwzj4aapz-ugnizq');
+  });
+});
+
+describe('groups to mute', () => {
+  const GROUPS = ['Србија побеђује'];
+  const two = (name: string, group: string, conf = 60) => [line(name, 18, conf), line(group, 82, conf)];
+  const k = (l: OcrLine[], groups = GROUPS) => classify(l, TARGET, 35, groups).kind;
+
+  it('mutes any deputy of a listed group, showing the name and the group', () => {
+    assert.deepEqual(classify(two('Ана Брнабић', 'Александар Вучић - Србија побеђује'), TARGET, 35, GROUPS), {
+      kind: 'target',
+      name: 'Србија побеђује',
+      line: 'Ана Брнабић · Србија побеђује',
+    });
+    assert.equal(k(two('Petar Petrović', 'Aleksandar Vučić - Srbija pobeđuje')), 'target');
+  });
+  it('still mutes on the group when only the group line was read', () => {
+    assert.deepEqual(classify([line('Александар Вучић - Србија побеђује', 82)], TARGET, 35, GROUPS), {
+      kind: 'target',
+      name: 'Србија побеђује',
+      line: 'Србија побеђује',
+    });
+  });
+  it('handles real replay readings of the group line', () => {
+    assert.equal(k(two('Миленко Јованов —', 'Александар ВучиЋ- УСрбија побеђује', 54)), 'target');
+    assert.equal(k(two('Миленко Јованбв. “У __', 'Александар ВучтЋ УСрбија побеђује.', 41)), 'target');
+    assert.equal(k(two('у. ипенкађованов', 'ФЏДдександар Ву Србија побеђује', 50)), 'target');
+    assert.equal(k([line('Миленко Јованов', 110), line('Александар Вучић - Србија побеђује', 152)]), 'target');
+  });
+  it('leaves other groups alone, including ones with a similar word', () => {
+    assert.equal(k(two('Мирослав Алексић', 'Кренимо испочетка - Народни покрет Србије')), 'other');
+    assert.equal(k(two('Марија Јовановић', 'Србија центар - Српска напредна странка')), 'other');
+  });
+  it('changes nothing when no group is listed', () => {
+    assert.equal(k(two('Ана Брнабић', 'Александар Вучић - Србија побеђује'), []), 'other');
+    assert.equal(findGroup(two('Ана Брнабић', 'Александар Вучић - Србија побеђује'), []), undefined);
+  });
+  it('keeps groups through sanitize and defaults to none', () => {
+    assert.deepEqual(sanitize({}).groups, []);
+    assert.deepEqual(sanitize({ groups: [' Србија побеђује ', '', 3] }).groups, ['Србија побеђује']);
   });
 });

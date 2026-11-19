@@ -148,7 +148,7 @@ async function tick(): Promise<void> {
   } else {
     const res = await ocr(cap.dataUrl);
     if (!res.ok) throw new Error(res.error);
-    obs = classify(res.lines, settings.speakers, settings.minConfidence);
+    obs = classify(res.lines, settings.speakers, settings.minConfidence, settings.groups);
     lastSig = cap.signature;
     lastSigAt = now;
     lastOcrText =

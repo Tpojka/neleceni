@@ -23,6 +23,7 @@ function fill(s: Settings): void {
   checkbox('showBadge').checked = s.showBadge;
   checkbox('debug').checked = s.debug;
   input('speakers').value = s.speakers.join('\n');
+  input('groups').value = s.groups.join('\n');
   input('channels').value = s.channels.join('\n');
   input('region.x').value = String(s.region.x);
   input('region.y').value = String(s.region.y);
@@ -44,6 +45,7 @@ function read(): Settings {
     showBadge: checkbox('showBadge').checked,
     debug: checkbox('debug').checked,
     speakers: lines(input('speakers').value),
+    groups: lines(input('groups').value),
     channels: lines(input('channels').value),
     region: { x: num('region.x'), y: num('region.y'), w: num('region.w'), h: num('region.h') },
     intervalMs: num('intervalMs'),
