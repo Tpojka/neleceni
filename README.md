@@ -115,7 +115,17 @@ YouTube-ово дугме за звук и јачину звука прошир�
   ```
 - Ако привремено не желите утишавање, искључите прекидач **Укључено** у прозорчићу проширења или у подешавањима.
 
-> Натпис у Скупштини има два реда: име говорника и, испод њега, посланичку групу (нпр. „Александар Вучић - Србија побеђује“). Проширење чита **само ред са именом говорника**. Зато посланици из групе која носи Вучићево име **не бивају** утишани.
+> Натпис у Скупштини има два реда: име говорника и, испод њега, посланичку групу (нпр. „Александар Вучић - Србија побеђује“). Проширење чита **само ред са именом говорника**. Поље **Кога утишати** зато не утишава посланике из групе која носи Вучићево име; то ради поље **Посланичке групе које треба утишати** испод.
+
+#### Посланичке групе које треба утишати
+
+Ако желите да утишате целу посланичку групу, а не да набрајате посланике једног по једног, упишите групу онако како пише у другом реду натписа:
+
+```
+Александар Вучић - Србија побеђује
+```
+
+Тада се утишава сваки говорник из те групе, без обзира на име у првом реду. Довољан је и само назив („Србија побеђује“). Говорник из друге групе прекида утишавање као и иначе. Подразумевано је уписана управо ова група; обришите је ако желите да утишавате само особе из поља **Кога утишати**.
 
 #### Канали
 
@@ -265,7 +275,17 @@ This is the main setting. Enter one name per line, as it appears in the on-scree
   ```
 - To pause muting, turn off **Enabled** in the popup or in the settings.
 
-> The Assembly's caption has two lines: the speaker's name and, below it, the parliamentary group (e.g. "Александар Вучић - Србија побеђује"). The extension reads **only the speaker's name line**. So members of the group named after Vučić are **not** muted.
+> The Assembly's caption has two lines: the speaker's name and, below it, the parliamentary group (e.g. "Александар Вучић - Србија побеђује"). The extension reads **only the speaker's name line**. So "Speakers to mute" does not mute members of the group named after Vučić; **Parliamentary groups to mute** below does that.
+
+#### Whole groups: "Parliamentary groups to mute"
+
+To mute a whole parliamentary group instead of listing its deputies one by one, enter the group as it appears on the caption's second line:
+
+```
+Александар Вучић - Србија побеђује
+```
+
+Every speaker from that group is then muted, whatever name is on the first line. The party part alone ("Србија побеђује") also works. A speaker from another group ends the mute as usual. This group is listed by default; delete it to mute only the people under "Speakers to mute".
 
 #### Which channels: "Channels"
 

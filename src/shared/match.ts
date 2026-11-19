@@ -175,6 +175,31 @@ export function isGroupLine(text: string): boolean {
 }
 
 /**
+ * OCR lines with junk dropped, split pieces joined and edge punctuation trimmed, top to bottom.
+ * Junk goes first, so it can neither be taken for a caption line nor be merged into one.
+ */
+function readableRows(lines: OcrLine[]): OcrLine[] {
+  return mergeRows(lines.filter((l) => l.confidence >= JUNK_CONFIDENCE))
+    .map((l) => ({ ...l, text: trimNoise(l.text.trim()) }))
+    .filter((l) => nameWords(l.text).length >= 1)
+    .sort((a, b) => a.y0 - b.y0);
+}
+
+/**
+ * True when `line` shows the parliamentary group `group` ("Александар Вучић - Србија побеђује").
+ * Either every word matches as for a name, or the whole line, letters only, is within 30 % edits of
+ * the group: a group line is long, and OCR often mangles one of its words beyond the per-word
+ * rules ("ФЏДдександар Ву Србија побеђује"). A name line alone is far too short to pass.
+ */
+export function lineMatchesGroup(line: string, group: string): boolean {
+  const target = normalize(group).replace(/ /g, '');
+  if (target.length < 4) return false;
+  if (lineMatchesName(line, group)) return true;
+  const compact = normalize(line).replace(/ /g, '');
+  return substringDistance(compact, target) <= Math.floor(target.length * 0.3);
+}
+
+/**
  * Pick the line that holds the speaker's name.
  *
  * The parliament caption has two lines: the name, then the parliamentary group. The group is
@@ -185,11 +210,7 @@ export function isGroupLine(text: string): boolean {
  * Without any group line (a speaker with no group), the top readable line is used.
  */
 export function pickSpeakerLine(lines: OcrLine[]): OcrLine | null {
-  // OCR junk goes first, so it can neither be taken for the name nor be merged into it.
-  const sorted = mergeRows(lines.filter((l) => l.confidence >= JUNK_CONFIDENCE))
-    .map((l) => ({ ...l, text: trimNoise(l.text.trim()) }))
-    .filter((l) => nameWords(l.text).length >= 1)
-    .sort((a, b) => a.y0 - b.y0);
+  const sorted = readableRows(lines);
 
   const above = (i: number) => {
     const l = sorted[i]!;
@@ -240,8 +261,22 @@ export type Observation =
   | { kind: 'other'; line: string };
 
 /** Turn OCR output into one observation for the mute state machine. */
-export function classify(lines: OcrLine[], speakers: string[], minConfidence: number): Observation {
+export function classify(
+  lines: OcrLine[],
+  speakers: string[],
+  minConfidence: number,
+  groups: string[] = [],
+): Observation {
   const line = pickSpeakerLine(lines);
+  // A listed parliamentary group mutes every member, whatever name the line above it shows.
+  if (groups.length) {
+    const rows = readableRows(lines);
+    const group = groups.find((g) => rows.some((r) => lineMatchesGroup(r.text, g)));
+    if (group) {
+      const name = line && !lineMatchesGroup(line.text, group) ? cleanLine(line.text) : '';
+      return { kind: 'target', name: group, line: name || group };
+    }
+  }
   if (!line) return { kind: 'none' };
   const hit = speakers.find((name) => lineMatchesName(line.text, name));
   if (hit) {

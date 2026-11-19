@@ -52,6 +52,9 @@ const en = {
   optSpeakers: 'Speakers to mute',
   optSpeakersHint:
     'One name per line, as it appears in the caption. Cyrillic and Latin both work (“Александар Вучић” also matches “Aleksandar Vučić”). Every word must match; a surname alone matches anyone with that surname.',
+  optGroups: 'Parliamentary groups to mute',
+  optGroupsHint:
+    'One group per line, as it appears on the second line of the caption, e.g. “Александар Вучић - Србија побеђује”. Every speaker from a listed group is muted, whatever their name.',
   optChannels: 'Channels',
   optChannelsHintHtml:
     'Channel handles (<code>@ParlamentSrbija</code>) or IDs (<code>UC…</code>), one per line. Leave empty to watch every YouTube video.',
@@ -124,6 +127,9 @@ const sr: Record<MessageKey, string> = {
   optSpeakers: 'Кога утишати',
   optSpeakersHint:
     'Једно име у сваком реду, онако како пише у натпису. Ћирилица и латиница се рачунају као исто („Александар Вучић“ препознаје и „Aleksandar Vučić“). Свака реч мора да се поклопи; само презиме препознаје свакога са тим презименом.',
+  optGroups: 'Посланичке групе које треба утишати',
+  optGroupsHint:
+    'Једна група у сваком реду, онако како пише у другом реду натписа, нпр. „Александар Вучић - Србија побеђује“. Утишава се сваки говорник из групе са списка, без обзира на име.',
   optChannels: 'Канали',
   optChannelsHintHtml:
     'Ознаке канала (<code>@ParlamentSrbija</code>) или ID-јеви (<code>UC…</code>), један у реду. Оставите празно да проширење ради на свим YouTube видеима.',

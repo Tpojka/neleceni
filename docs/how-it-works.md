@@ -43,6 +43,11 @@ every 1.5 s:
    a clear piece ("А екса · р Вучић") or, for long words, with up to 40 % of the letters wrong ("АпењСандар Вучић").
    A line counts as *another speaker* only if it is confident, has at least two capitalised words and does not
    contain a listed surname, so a garbled reading of the target can never end the mute.
+   - **Groups** (`lineMatchesGroup`). A listed parliamentary group ("Александар Вучић - Србија побеђује") is
+     looked for on every caption line. When it is found, the stream is muted whatever name is above it, so one
+     entry covers every deputy of that group. A group matches when every word matches as for a name, or when the
+     whole line is within 30 % edits of it (group lines are long, and OCR often mangles one word). Another
+     group's caption counts as another speaker, as before.
 6. **Mute** (`src/content/audio.ts`). The video's audio is routed through a Web Audio gain node the first time a
    mute is needed, and the gain is ramped to 0 or 1. YouTube's own volume and mute button are left alone. If the
    element was already connected to Web Audio by another extension, `video.muted` is used instead.

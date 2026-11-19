@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import { classify, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
+import { classify, lineMatchesGroup, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
 import { channelKey } from '../src/content/channel.ts';
 
 const TARGET = ['Александар Вучић'];
@@ -161,6 +161,39 @@ describe('classify', () => {
   });
   it('does not count lower-case noise as another speaker', () => {
     assert.equal(classify([line('ииии тттт сссс', 30, 70)], TARGET, 35).kind, 'none');
+  });
+});
+
+describe('groups', () => {
+  const GROUP = ['Александар Вучић - Србија побеђује'];
+  const SNS = 'Александар Вучић - Србија побеђује';
+  it('mutes every deputy of a listed group, whatever the name line says', () => {
+    const lines = [line('Миленко Јованов', 110), line(SNS, 152)];
+    assert.deepEqual(classify(lines, [], 35, GROUP), { kind: 'target', name: GROUP[0], line: 'Миленко Јованов' });
+    assert.equal(classify([line('Ана Брнабић', 18), line(SNS, 82)], [], 35, GROUP).kind, 'target');
+  });
+  it('mutes when only the group line was read', () => {
+    assert.deepEqual(classify([line(SNS, 82)], [], 35, GROUP), { kind: 'target', name: GROUP[0], line: GROUP[0] });
+  });
+  it('matches the group in Latin and in real noisy OCR readings', () => {
+    assert.ok(lineMatchesGroup('Aleksandar Vučić - Srbija pobeđuje', GROUP[0]!));
+    assert.ok(lineMatchesGroup('Александар ВучиЋ- УСрбија побеђује', GROUP[0]!));
+    assert.ok(lineMatchesGroup('Александар ВучтЋ УСрбија побеђује.', GROUP[0]!));
+    assert.ok(lineMatchesGroup('ФЏДдександар Ву Србија побеђује', GROUP[0]!));
+    assert.ok(lineMatchesGroup(',ександар Ву ~ . у Србија побеђује', GROUP[0]!));
+  });
+  it('does not take the leader’s name line or another group for the group', () => {
+    assert.ok(!lineMatchesGroup('Александар Вучић', GROUP[0]!));
+    assert.ok(!lineMatchesGroup('Србија центар - СРЦЕ', GROUP[0]!));
+    assert.ok(!lineMatchesGroup('Мирослав Алексић - Народни покрет Србије', GROUP[0]!));
+    assert.ok(!lineMatchesGroup('Ивица Дачић - Социјалистичка партија Србије', GROUP[0]!));
+  });
+  it('counts a speaker from another group as someone else', () => {
+    const lines = [line('Мирослав Алексић', 110), line('Мирослав Алексић - Народни покрет Србије', 152)];
+    assert.deepEqual(classify(lines, [], 35, GROUP), { kind: 'other', line: 'Мирослав Алексић' });
+  });
+  it('accepts just the party part of the group name', () => {
+    assert.equal(classify([line('Миленко Јованов', 110), line(SNS, 152)], [], 35, ['Србија побеђује']).kind, 'target');
   });
 });
 

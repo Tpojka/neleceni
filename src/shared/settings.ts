@@ -15,6 +15,11 @@ export interface Settings {
   channels: string[];
   /** Speaker names that trigger the mute. Cyrillic or Latin; matching ignores script and diacritics. */
   speakers: string[];
+  /**
+   * Parliamentary groups whose every member triggers the mute, as written on the caption's second
+   * line ("Александар Вучић - Србија побеђује"). Matching ignores script and diacritics.
+   */
+  groups: string[];
   /** Where the name caption sits in the frame. */
   region: Region;
   /** A pixel counts as caption text when all of R, G and B are at least this bright (0–255). */
@@ -41,6 +46,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   channels: ['@ParlamentSrbija', 'UCghngrfQwzJ4aaPZ-UgNIZQ'],
   speakers: ['Александар Вучић'],
+  groups: ['Александар Вучић - Србија побеђује'],
   // Measured on the 17 Nov 2026 broadcast. The caption (name, then parliamentary group) comes
   // in two sizes: small in the lower-left corner (lines at 90–99 % of the height, 2–48 % of the
   // width) and large (lines at 82–94 %, 8–87 %). This region covers both.
@@ -85,6 +91,7 @@ export function sanitize(raw: unknown): Settings {
     enabled: typeof r.enabled === 'boolean' ? r.enabled : d.enabled,
     channels: stringList(r.channels, d.channels),
     speakers: stringList(r.speakers, d.speakers),
+    groups: stringList(r.groups, d.groups),
     region: {
       x,
       y,
