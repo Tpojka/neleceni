@@ -115,7 +115,22 @@ YouTube-ово дугме за звук и јачину звука прошир�
   ```
 - Ако привремено не желите утишавање, искључите прекидач **Укључено** у прозорчићу проширења или у подешавањима.
 
-> Натпис у Скупштини има два реда: име говорника и, испод њега, посланичку групу (нпр. „Александар Вучић - Србија побеђује“). Проширење чита **само ред са именом говорника**. Зато посланици из групе која носи Вучићево име **не бивају** утишани.
+> Натпис у Скупштини има два реда: име говорника и, испод њега, посланичку групу (нпр. „Александар Вучић - Србија побеђује“). Проширење чита **само ред са именом говорника**. Зато посланици из групе која носи Вучићево име **не бивају** утишани, осим ако ту групу упишете у „Које посланичке групе утишати“ (испод).
+
+#### Које посланичке групе утишати
+
+Није обавезно, подразумевано је празно. Упишите једну групу у сваком реду, онако како пише у другом реду натписа. Тада се утишава **сваки** говорник у чијем натпису стоји та група, без обзира на име.
+
+**Пример: утишавање целе групе „Србија побеђује“**:
+
+```
+Србија побеђује
+```
+
+- Довољан је назив групе, без имена на почетку („Александар Вучић - …“).
+- Ћирилица и латиница се рачунају као исто, као и код имена.
+- Свака реч мора да се поклопи, па „Србија побеђује“ не утишава, на пример, групу „Народни покрет Србије“.
+- Звук се враћа када се појави говорник из друге групе, исто као код имена.
 
 #### Канали
 
@@ -265,7 +280,22 @@ This is the main setting. Enter one name per line, as it appears in the on-scree
   ```
 - To pause muting, turn off **Enabled** in the popup or in the settings.
 
-> The Assembly's caption has two lines: the speaker's name and, below it, the parliamentary group (e.g. "Александар Вучић - Србија побеђује"). The extension reads **only the speaker's name line**. So members of the group named after Vučić are **not** muted.
+> The Assembly's caption has two lines: the speaker's name and, below it, the parliamentary group (e.g. "Александар Вучић - Србија побеђује"). The extension reads **only the speaker's name line**. So members of the group named after Vučić are **not** muted, unless you list that group under "Parliamentary groups to mute" (below).
+
+#### Whole groups: "Parliamentary groups to mute"
+
+Optional, empty by default. Enter one group per line, as it appears in the caption's second line. Then **every** speaker whose caption shows that group is muted, whatever their name.
+
+**Example: muting the whole "Србија побеђује" group**:
+
+```
+Србија побеђује
+```
+
+- The group name is enough; leave out the name in front of it ("Александар Вучић - …").
+- Cyrillic and Latin count as the same, as with names.
+- Every word must match, so "Србија побеђује" does not mute, for instance, the "Народни покрет Србије" group.
+- The sound comes back when a speaker from another group appears, just as with names.
 
 #### Which channels: "Channels"
 

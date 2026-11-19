@@ -52,12 +52,15 @@ const en = {
   optSpeakers: 'Speakers to mute',
   optSpeakersHint:
     'One name per line, as it appears in the caption. Cyrillic and Latin both work (“Александар Вучић” also matches “Aleksandar Vučić”). Every word must match; a surname alone matches anyone with that surname.',
+  optGroups: 'Parliamentary groups to mute',
+  optGroupsHint:
+    'Optional. One group per line, as it appears in the caption’s second line (e.g. “Србија побеђује”). Mutes every speaker whose caption shows that group. Leave empty to mute by name only.',
   optChannels: 'Channels',
   optChannelsHintHtml:
     'Channel handles (<code>@ParlamentSrbija</code>) or IDs (<code>UC…</code>), one per line. Leave empty to watch every YouTube video.',
   optRegion: 'Caption position',
   optRegionHint:
-    'Where the name caption sits, in percent of the video frame. The default covers both caption sizes the parliament uses. The line right above the parliamentary group line (the one with “ - ”) is read as the speaker’s name; the group line itself is ignored. Without a group line, the top line is used. Turn on the debug view to see exactly what is read.',
+    'Where the name caption sits, in percent of the video frame. The default covers both caption sizes the parliament uses. The line right above the parliamentary group line (the one with “ - ”) is read as the speaker’s name; the group line itself is only used for “Parliamentary groups to mute”. Without a group line, the top line is used. Turn on the debug view to see exactly what is read.',
   optLeft: 'Left %',
   optTop: 'Top %',
   optWidth: 'Width %',
@@ -124,12 +127,15 @@ const sr: Record<MessageKey, string> = {
   optSpeakers: 'Кога утишати',
   optSpeakersHint:
     'Једно име у сваком реду, онако како пише у натпису. Ћирилица и латиница се рачунају као исто („Александар Вучић“ препознаје и „Aleksandar Vučić“). Свака реч мора да се поклопи; само презиме препознаје свакога са тим презименом.',
+  optGroups: 'Које посланичке групе утишати',
+  optGroupsHint:
+    'Није обавезно. Једна група у сваком реду, онако како пише у другом реду натписа (нпр. „Србија побеђује“). Утишава сваког говорника у чијем натпису стоји та група. Оставите празно да се утишава само по имену.',
   optChannels: 'Канали',
   optChannelsHintHtml:
     'Ознаке канала (<code>@ParlamentSrbija</code>) или ID-јеви (<code>UC…</code>), један у реду. Оставите празно да проширење ради на свим YouTube видеима.',
   optRegion: 'Положај натписа',
   optRegionHint:
-    'Део слике у коме стоји натпис са именом, у процентима. Подразумевана вредност покрива обе величине натписа које користи Скупштина. Као име говорника чита се ред одмах изнад реда са посланичком групом (онај са „ - “); сам ред са групом се занемарује. Ако реда са групом нема, чита се горњи ред. Укључите приказ за отклањање грешака да видите шта се тачно чита.',
+    'Део слике у коме стоји натпис са именом, у процентима. Подразумевана вредност покрива обе величине натписа које користи Скупштина. Као име говорника чита се ред одмах изнад реда са посланичком групом (онај са „ - “); сам ред са групом се користи само за „Које посланичке групе утишати“. Ако реда са групом нема, чита се горњи ред. Укључите приказ за отклањање грешака да видите шта се тачно чита.',
   optLeft: 'Лево %',
   optTop: 'Горе %',
   optWidth: 'Ширина %',

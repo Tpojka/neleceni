@@ -174,6 +174,27 @@ export function isGroupLine(text: string): boolean {
   return GROUP_DASH.test(text) || nameWords(text).length >= 4;
 }
 
+/** Readable caption rows, top to bottom. OCR junk goes first, so it can neither be taken for a line nor be merged into one. */
+function captionRows(lines: OcrLine[]): OcrLine[] {
+  return mergeRows(lines.filter((l) => l.confidence >= JUNK_CONFIDENCE))
+    .map((l) => ({ ...l, text: trimNoise(l.text.trim()) }))
+    .filter((l) => nameWords(l.text).length >= 1)
+    .sort((a, b) => a.y0 - b.y0);
+}
+
+/**
+ * The first of `groups` named anywhere in the caption, or undefined.
+ *
+ * Every row is checked, not only the one that looks like the group line: OCR often loses the
+ * dash ("ФЏДдександар Ву Србија побеђује"), and in wide shots both caption lines merge into one.
+ * A group name has every word matched, so it does not turn up in a speaker's name line.
+ */
+export function findGroup(lines: OcrLine[], groups: string[]): string | undefined {
+  if (!groups.length) return undefined;
+  const rows = captionRows(lines);
+  return groups.find((g) => rows.some((l) => lineMatchesName(l.text, g)));
+}
+
 /**
  * Pick the line that holds the speaker's name.
  *
@@ -185,11 +206,7 @@ export function isGroupLine(text: string): boolean {
  * Without any group line (a speaker with no group), the top readable line is used.
  */
 export function pickSpeakerLine(lines: OcrLine[]): OcrLine | null {
-  // OCR junk goes first, so it can neither be taken for the name nor be merged into it.
-  const sorted = mergeRows(lines.filter((l) => l.confidence >= JUNK_CONFIDENCE))
-    .map((l) => ({ ...l, text: trimNoise(l.text.trim()) }))
-    .filter((l) => nameWords(l.text).length >= 1)
-    .sort((a, b) => a.y0 - b.y0);
+  const sorted = captionRows(lines);
 
   const above = (i: number) => {
     const l = sorted[i]!;
@@ -240,8 +257,15 @@ export type Observation =
   | { kind: 'other'; line: string };
 
 /** Turn OCR output into one observation for the mute state machine. */
-export function classify(lines: OcrLine[], speakers: string[], minConfidence: number): Observation {
+export function classify(lines: OcrLine[], speakers: string[], minConfidence: number, groups: string[] = []): Observation {
   const line = pickSpeakerLine(lines);
+  // A listed parliamentary group mutes whoever speaks for it. The pill shows the name line, if
+  // one was read, followed by the configured group spelling.
+  const group = findGroup(lines, groups);
+  if (group) {
+    const who = line ? cleanLine(line.text) : '';
+    return { kind: 'target', name: group, line: who ? `${who} · ${group}` : group };
+  }
   if (!line) return { kind: 'none' };
   const hit = speakers.find((name) => lineMatchesName(line.text, name));
   if (hit) {
