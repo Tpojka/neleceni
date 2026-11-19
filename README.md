@@ -72,6 +72,10 @@ npm run build
 
 > Chrome памти проширење по путањи до фасцикле. Ако фасциклу преместите или преименујете, уклоните проширење и поново га учитајте преко **Load unpacked**. Подешавања се тада враћају на подразумевана.
 
+#### Firefox
+
+Постоји и верзија за Firefox 128 или новији: упутства су у [firefox/README.md](firefox/README.md).
+
 ### Коришћење
 
 Кад је проширење инсталирано, не морате ништа да подешавате: отворите пренос са канала @ParlamentSrbija и оно ради само.
@@ -221,6 +225,10 @@ npm run build
 The finished extension is in the `dist/` folder; load it as in steps 3–7 above. **Updating:** `git pull`, `npm install`, `npm run build`, then ↻ on the **Neleceni** card.
 
 > Chrome identifies the extension by its folder path. If you move or rename the folder, remove the extension and load it again with **Load unpacked**. Its settings then go back to the defaults.
+
+#### Firefox
+
+There is also a version for Firefox 128 or newer: see [firefox/README.md](firefox/README.md).
 
 ### Using it
 

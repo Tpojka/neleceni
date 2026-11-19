@@ -7,10 +7,13 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
+    "build:firefox": "node firefox/build.mjs",
+    "watch:firefox": "node firefox/build.mjs --watch",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"test/**/*.test.ts\"",
-    "check": "npm run typecheck && npm test && npm run build",
-    "zip": "npm run build && rm -f neleceni-*.zip && cd dist && zip -qrX ../neleceni-$npm_package_version.zip . -x '.*' && cd .. && echo \"Wrote neleceni-$npm_package_version.zip\""
+    "check": "npm run typecheck && npm test && npm run build && npm run build:firefox",
+    "zip": "npm run build && rm -f neleceni-*.zip && cd dist && zip -qrX ../neleceni-$npm_package_version.zip . -x '.*' && cd .. && echo \"Wrote neleceni-$npm_package_version.zip\"",
+    "zip:firefox": "npm run build:firefox && rm -f neleceni-firefox-*.zip && cd firefox/dist && zip -qrX ../../neleceni-firefox-$npm_package_version.zip . -x '.*' && cd ../.. && echo \"Wrote neleceni-firefox-$npm_package_version.zip\""
   },
   "engines": {
     "node": ">=23.6"

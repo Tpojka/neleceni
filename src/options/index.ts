@@ -83,7 +83,10 @@ document.getElementById('reset')!.addEventListener('click', async () => {
 document.addEventListener('click', (e) => {
   if (!(e.target instanceof Element) || !e.target.closest('[data-action="shortcuts"]')) return;
   e.preventDefault();
-  void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  // Firefox (137+) has its own call for this; it refuses to open chrome:// pages.
+  const ff = (globalThis as { browser?: { commands?: { openShortcutSettings?: () => Promise<void> } } }).browser;
+  if (ff?.commands?.openShortcutSettings) void ff.commands.openShortcutSettings();
+  else void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
 });
 
 translate(DEFAULT_SETTINGS.language);
