@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import type { Observation } from '../src/shared/match.ts';
+import { invert, type Observation } from '../src/shared/match.ts';
 import { initialState, isMuted, step, toggle, type MuteState, type StepConfig } from '../src/shared/state.ts';
 
 const cfg: StepConfig = { otherConfirmations: 3, releaseAfterGoneSec: 0 };
@@ -60,5 +60,28 @@ describe('manual override', () => {
     const s = toggle(toggle(run([target])));
     assert.equal(s.override, null);
     assert.ok(isMuted(s));
+  });
+});
+
+describe('"hear only the listed speakers" mode (readings passed through invert)', () => {
+  const jovo: Observation = { kind: 'target', name: 'Јово Бакић', line: 'Јово Бакић' };
+  const only = (obs: Observation[], c = cfg) => run(obs.map((o) => invert(o, ['Јово Бакић'])), c);
+  it('plays before any caption is read', () => {
+    assert.ok(!isMuted(only([none, none])));
+  });
+  it('mutes on the first reading of another speaker', () => {
+    assert.ok(isMuted(only([other()])));
+  });
+  it('un-mutes after the listed name has been read enough times', () => {
+    assert.ok(isMuted(only([other(), jovo, jovo])));
+    assert.ok(!isMuted(only([other(), jovo, jovo, jovo])));
+    assert.ok(!isMuted(only([other(), jovo], { ...cfg, otherConfirmations: 1 })));
+  });
+  it('another speaker in between mutes again at once', () => {
+    assert.ok(isMuted(only([other(), jovo, jovo, jovo, other('Александар Вучић')])));
+  });
+  it('a vanished caption or an unreadable one changes nothing', () => {
+    assert.ok(isMuted(only([other(), none, none, none])));
+    assert.ok(!isMuted(only([other(), jovo, jovo, jovo, none, none])));
   });
 });

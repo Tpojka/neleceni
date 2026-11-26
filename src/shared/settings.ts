@@ -8,9 +8,18 @@ export interface Region {
   h: number;
 }
 
+/**
+ * `mute`: mute while a listed speaker holds the floor (the original behaviour).
+ * `only`: the listed speakers are the only ones heard; everyone else is muted.
+ */
+export type Mode = 'mute' | 'only';
+export const MODES: readonly Mode[] = ['mute', 'only'];
+
 export interface Settings {
   /** Master switch. */
   enabled: boolean;
+  /** What the speaker list means, see `Mode`. */
+  mode: Mode;
   /** Channel handles (`@Name`) or channel IDs (`UC…`) to work on. Empty list = every video. */
   channels: string[];
   /** Speaker names that trigger the mute. Cyrillic or Latin; matching ignores script and diacritics. */
@@ -39,6 +48,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
+  mode: 'mute',
   channels: ['@ParlamentSrbija', 'UCghngrfQwzJ4aaPZ-UgNIZQ'],
   speakers: ['Александар Вучић'],
   // Measured on the 17 Nov 2026 broadcast. The caption (name, then parliamentary group) comes
@@ -83,6 +93,7 @@ export function sanitize(raw: unknown): Settings {
   const y = clamp(reg.y, 0, 99, d.region.y);
   return {
     enabled: typeof r.enabled === 'boolean' ? r.enabled : d.enabled,
+    mode: (MODES as readonly unknown[]).includes(r.mode) ? (r.mode as Mode) : d.mode,
     channels: stringList(r.channels, d.channels),
     speakers: stringList(r.speakers, d.speakers),
     region: {

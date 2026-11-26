@@ -55,6 +55,26 @@ every 1.5 s:
 - Manual toggle (pill click or Alt+Shift+M) holds until a clearly different caption has been read 3 times.
 - Seeking in a replay or switching videos resets the state; the caption at the new position decides.
 
+### Modes (`mode` setting)
+
+- **mute** (default): mute while a listed speaker holds the floor, as described above.
+- **only**: the listed speakers are the only ones heard. `classifyHearOnly` (`src/shared/match.ts`) swaps the
+  roles before the state machine: another speaker's name mutes at once, and a listed name must be read
+  `otherConfirmations` times to un-mute (1 is a good value in this mode). Two guards make the swap safe:
+  - A reading that contains any word of a listed name ("ЈовнфЉ Баљић" for "Јово Бакић") changes nothing, so a
+    garbled listed name can never mute that speaker.
+  - Another speaker's name line often reads at 20–34 % over a busy background, below `minConfidence`. A caption
+    whose group line (spaced dash, or 4+ words) is read confidently still counts as another speaker.
+
+Checked on real frames from the 24.11.2026 replay (`test-frames-bin/`, the extension's own OCR input captured with
+`captureCaption` in the page; run `npx tsx scripts/try-frames.ts --mode only --speakers "Јово Бакић" --conf 1 --bin $(sh scripts/frames-args.sh)`):
+
+| Replay time | Caption | mute, Вучић | only, Бакић (conf 1) |
+|---|---|---|---|
+| 3:20:58 | Александар Вучић | muted at once | muted at once |
+| 3:34:00 | Јово Бакић / Студентска листа | un-muted at 3:34:04.5 (3rd reading) | heard from 3:34:00; garbled reading at 3:34:04.5 ignored |
+| 3:49:51 | Александар Вучић (large caption) | muted at 3:49:55.5 | muted at 3:49:51 |
+
 ## Caption layouts on @ParlamentSrbija
 
 Measured on the 17 Nov 2026 session, in percent of the video frame:

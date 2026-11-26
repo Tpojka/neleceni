@@ -42,6 +42,13 @@
         <section class="stack">
           <label class="check"><input type="checkbox" name="enabled" /> <strong data-i18n="optEnabled"></strong></label>
           <label class="field">
+            <span data-i18n="optMode"></span>
+            <select name="mode">
+              <option value="mute" data-i18n="optModeMute"></option>
+              <option value="only" data-i18n="optModeOnly"></option>
+            </select>
+          </label>
+          <label class="field">
             <span data-i18n="optSpeakers"></span>
             <textarea name="speakers" rows="3" spellcheck="false"></textarea>
             <span class="hint" data-i18n="optSpeakersHint"></span>
