@@ -3,7 +3,7 @@
  * video, sends it to the extension's OCR (offscreen document), and mutes or un-mutes the video
  * through Web Audio. Works the same on live streams and on replays.
  */
-import { classify, type Observation } from '../shared/match.ts';
+import { classify, classifyHearOnly, type Observation } from '../shared/match.ts';
 import type { OcrRequest, OcrResponse, StatusMessage, TabStatus, ToContent } from '../shared/messages.ts';
 import { resolveLang, t, type Lang } from '../shared/i18n.ts';
 import { initialState, isMuted, step, toggle, type MuteState } from '../shared/state.ts';
@@ -148,7 +148,10 @@ async function tick(): Promise<void> {
   } else {
     const res = await ocr(cap.dataUrl);
     if (!res.ok) throw new Error(res.error);
-    obs = classify(res.lines, settings.speakers, settings.minConfidence);
+    obs =
+      settings.mode === 'only'
+        ? classifyHearOnly(res.lines, settings.speakers, settings.minConfidence)
+        : classify(res.lines, settings.speakers, settings.minConfidence);
     lastSig = cap.signature;
     lastSigAt = now;
     lastOcrText =

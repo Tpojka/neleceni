@@ -1,6 +1,6 @@
 import { resolveLang, t, type Lang, type LangSetting } from '../shared/i18n.ts';
 import { applyTranslations } from '../shared/i18n-dom.ts';
-import { DEFAULT_SETTINGS, loadSettings, sanitize, saveSettings, type Settings } from '../shared/settings.ts';
+import { DEFAULT_SETTINGS, loadSettings, sanitize, saveSettings, type Mode, type Settings } from '../shared/settings.ts';
 
 const form = document.getElementById('form') as HTMLFormElement;
 const saved = document.getElementById('saved') as HTMLSpanElement;
@@ -20,6 +20,7 @@ function translate(setting: LangSetting): void {
 function fill(s: Settings): void {
   input('language').value = s.language;
   checkbox('enabled').checked = s.enabled;
+  input('mode').value = s.mode;
   checkbox('showBadge').checked = s.showBadge;
   checkbox('debug').checked = s.debug;
   input('speakers').value = s.speakers.join('\n');
@@ -41,6 +42,7 @@ function read(): Settings {
   return sanitize({
     language: input('language').value as LangSetting,
     enabled: checkbox('enabled').checked,
+    mode: input('mode').value as Mode,
     showBadge: checkbox('showBadge').checked,
     debug: checkbox('debug').checked,
     speakers: lines(input('speakers').value),

@@ -262,6 +262,60 @@ export function classify(lines: OcrLine[], speakers: string[], minConfidence: nu
   return { kind: 'none' };
 }
 
+/** True when any word of `name` with 4+ letters is read in `line`, allowing OCR mistakes. */
+export function mentionsNameWord(line: string, name: string): boolean {
+  const compact = normalize(line).replace(/ /g, '');
+  return normalize(name)
+    .split(' ')
+    .some((w) => w.length >= 4 && substringDistance(compact, w) <= allowedErrors(w.length));
+}
+
+/**
+ * Swap the roles of the listed speakers and everyone else, for the "only the listed speakers are
+ * heard" mode: another speaker's name becomes the reading that mutes, a listed name becomes the
+ * reading that counts towards un-muting.
+ *
+ * In this mode one reading of "another speaker" mutes at once, so a garbled listed name must never
+ * count as one: the replay of 24.11.2026 read "Јово Бакић" as "ЈовнфЉ Баљић" mid-speech. A line
+ * that contains any word of a listed name is therefore treated as unreadable.
+ */
+export function invert(o: Observation, speakers: string[]): Observation {
+  if (o.kind === 'target') return { kind: 'other', line: o.line };
+  if (o.kind === 'other') {
+    if (speakers.some((name) => mentionsNameWord(o.line, name))) return { kind: 'none' };
+    return { kind: 'target', name: o.line, line: o.line };
+  }
+  return o;
+}
+
+/**
+ * `classify` for the "only the listed speakers are heard" mode, with the roles swapped by `invert`.
+ *
+ * Here another speaker's name is what mutes, so it must not be missed. `classify` only counts a
+ * confident, cleanly read name as another speaker, which suits the original mode, where that
+ * reading ends a mute. The large caption over a busy background often reads the name line at
+ * 20–34 % ("Дао Са ан Вучић") while the group line below it reads fine (24.11.2026, 3:49:52).
+ * So a caption whose group line (spaced dash, or 4+ words: OCR often reads the dash as a dot) is
+ * read confidently counts as another speaker even when its name
+ * line is blurry, as long as no word of a listed name appears in it.
+ */
+export function classifyHearOnly(lines: OcrLine[], speakers: string[], minConfidence: number): Observation {
+  const o = invert(classify(lines, speakers, minConfidence), speakers);
+  if (o.kind !== 'none') return o;
+  const line = pickSpeakerLine(lines);
+  if (!line || nameWords(line.text).length < 1) return o;
+  if (speakers.some((name) => mentionsNameWord(line.text, name))) return o;
+  const groupBelow = lines.some(
+    (l) => l.y0 > line.y0 && l.confidence >= minConfidence && isGroupLine(l.text) && !mentionsAnyListed(l.text, speakers),
+  );
+  if (!groupBelow) return o;
+  const shown = cleanLine(line.text) || line.text.trim();
+  return { kind: 'target', name: shown, line: shown };
+}
+
+const mentionsAnyListed = (text: string, speakers: string[]): boolean =>
+  speakers.some((name) => mentionsNameWord(text, name));
+
 /**
  * True when two OCR readings are probably the same caption. OCR noise changes a letter or two
  * between frames, while a new speaker's name differs in most letters.

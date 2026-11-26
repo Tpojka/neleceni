@@ -49,7 +49,10 @@ const en = {
   optLanguage: 'Језик / Language',
   optLangAuto: 'Automatic (Chrome’s language)',
   optEnabled: 'Enabled',
-  optSpeakers: 'Speakers to mute',
+  optMode: 'Mode',
+  optModeMute: 'Mute the speakers on the list',
+  optModeOnly: 'Hear only the speakers on the list (mute everyone else)',
+  optSpeakers: 'Speakers on the list',
   optSpeakersHint:
     'One name per line, as it appears in the caption. Cyrillic and Latin both work (“Александар Вучић” also matches “Aleksandar Vučić”). Every word must match; a surname alone matches anyone with that surname.',
   optChannels: 'Channels',
@@ -75,7 +78,7 @@ const en = {
   optMinConfidence: 'Min. confidence for other names (%)',
   optReleaseAfter: 'Un-mute after N s without the name (0 = off)',
   optDetectionHint:
-    'The mute starts on the first reading of a listed name and ends when another speaker’s name has been read the given number of times. A caption that disappears does not end the mute, because the speech usually goes on.',
+    'The mute starts on the first reading of a listed name and ends when another speaker’s name has been read the given number of times. A caption that disappears does not end the mute, because the speech usually goes on. In the “hear only” mode the roles swap: another speaker’s name mutes at once, and a listed name must be read the given number of times to un-mute.',
   optDisplay: 'Display and shortcut',
   optShowBadge: 'Show the status pill on the video (click it to mute or un-mute by hand)',
   optDebug: 'Debug view: show the processed caption crop and the OCR text under the pill',
@@ -121,7 +124,10 @@ const sr: Record<MessageKey, string> = {
   optLanguage: 'Језик / Language',
   optLangAuto: 'Аутоматски (језик Chrome-а)',
   optEnabled: 'Укључено',
-  optSpeakers: 'Кога утишати',
+  optMode: 'Режим',
+  optModeMute: 'Утишај особе са списка',
+  optModeOnly: 'Чују се само особе са списка (сви остали се утишавају)',
+  optSpeakers: 'Особе са списка',
   optSpeakersHint:
     'Једно име у сваком реду, онако како пише у натпису. Ћирилица и латиница се рачунају као исто („Александар Вучић“ препознаје и „Aleksandar Vučić“). Свака реч мора да се поклопи; само презиме препознаје свакога са тим презименом.',
   optChannels: 'Канали',
@@ -147,7 +153,7 @@ const sr: Record<MessageKey, string> = {
   optMinConfidence: 'Најмања поузданост за друга имена (%)',
   optReleaseAfter: 'Врати звук после N s без имена (0 = искључено)',
   optDetectionHint:
-    'Утишавање почиње чим се први пут прочита име са списка, а престаје кад се име другог говорника прочита задати број пута. Нестанак натписа не враћа звук, јер говор обично траје и даље.',
+    'Утишавање почиње чим се први пут прочита име са списка, а престаје кад се име другог говорника прочита задати број пута. Нестанак натписа не враћа звук, јер говор обично траје и даље. У режиму „чују се само“ улоге се мењају: име другог говорника одмах утишава, а име са списка мора да се прочита задати број пута да би се звук вратио.',
   optDisplay: 'Приказ и пречица',
   optShowBadge: 'Прикажи ознаку стања на видеу (клик на њу ручно утишава или враћа звук)',
   optDebug: 'Приказ за отклањање грешака: исечак натписа и препознати текст испод ознаке',

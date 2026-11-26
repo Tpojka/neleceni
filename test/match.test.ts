@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import { classify, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
+import { classify, classifyHearOnly, invert, lineMatchesName, normalize, pickSpeakerLine, similarLines, type OcrLine } from '../src/shared/match.ts';
 import { channelKey } from '../src/content/channel.ts';
 
 const TARGET = ['Александар Вучић'];
@@ -176,5 +176,32 @@ describe('channelKey', () => {
     assert.equal(channelKey('@ParlamentSrbija'), '@parlamentsrbija');
     assert.equal(channelKey('https://www.youtube.com/@ParlamentSrbija/streams'), '@parlamentsrbija');
     assert.equal(channelKey('/channel/UCghngrfQwzJ4aaPZ-UgNIZQ'), 'ucghngrfqwzj4aapz-ugnizq');
+  });
+});
+
+describe('invert', () => {
+  const S = ['Јово Бакић'];
+  it('swaps the listed speaker and everyone else', () => {
+    assert.equal(invert(classify([line('Јово Бакић', 110), line('Студентска листа', 152)], S, 35), S).kind, 'other');
+    assert.equal(invert(classify([line('Сара Валентик', 110), line('Студентска листа', 152)], S, 35), S).kind, 'target');
+  });
+  it('keeps a garbled listed surname neutral', () => {
+    assert.equal(invert(classify([line('Хиоса ћр Бакић', 60, 63)], S, 35), S).kind, 'none');
+  });
+  it('counts a blurry name over a confident group line as another speaker (24.11.2026, 3:49:52)', () => {
+    const vucic = [line('Дао Са ан Вучић', 110, 21), line('Александар Вучић - Србија побеђује', 152, 42)];
+    assert.equal(classify(vucic, S, 35).kind, 'none');
+    assert.equal(classifyHearOnly(vucic, S, 35).kind, 'target');
+    // ...but not when the group line is unreliable, or the name line holds a word of a listed name.
+    assert.equal(classifyHearOnly([line('Дао Са ан Вучић', 110, 21), line('Александар Вучић - Србија', 152, 20)], S, 35).kind, 'none');
+    assert.equal(classifyHearOnly([line('Јовнф Баљић', 110, 21), line('Неко Нешто - Група', 152, 60)], S, 35).kind, 'none');
+  });
+  it('reads the listed speaker and others the same way as invert(classify())', () => {
+    assert.equal(classifyHearOnly([line('Јово Бакић', 110), line('Студентска листа', 152)], S, 35).kind, 'other');
+    assert.equal(classifyHearOnly([line('Сара Валентик', 110), line('Студентска листа', 152)], S, 35).kind, 'target');
+  });
+  it('keeps a garbled listed name neutral when only the first name survives (24.11.2026, 3:34:04)', () => {
+    assert.equal(classify([line('ЈовнфЉ Баљић', 110), line('Студентска листа', 152)], S, 35).kind, 'other');
+    assert.equal(invert(classify([line('ЈовнфЉ Баљић', 110), line('Студентска листа', 152)], S, 35), S).kind, 'none');
   });
 });
